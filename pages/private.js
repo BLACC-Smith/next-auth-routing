@@ -1,12 +1,11 @@
-import nookies from 'nookies';
 import { auth } from '../lib/firebaseClient';
 import { useRouter } from 'next/router';
-import { verifyIdToken } from '../lib/firebaseAdmin';
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../hooks/useAuth';
+import { checkNookies } from '../lib';
 
-export default function Private() {
+export default function Private({ token, error }) {
 	const { user } = useAuth();
 	const router = useRouter();
 
@@ -16,11 +15,10 @@ export default function Private() {
 	};
 
 	useEffect(() => {
-		setTimeout(() => {
-			!user && router.push('/login');
-		}, 1000);
+		error && router.push('/login');
 	}, []);
 
+	if (!user) return <div>Loading...</div>;
 	return (
 		<>
 			<div>This page is server-side rendered!</div>
@@ -37,11 +35,5 @@ export default function Private() {
 }
 
 export async function getServerSideProps(context) {
-	try {
-		const cookies = nookies.get(context);
-		const { uid, email } = await verifyIdToken(cookies.token);
-		return { props: { uid, email } };
-	} catch (error) {
-		return { props: { error: true } };
-	}
+	return await checkNookies(context);
 }

@@ -1,10 +1,11 @@
-import nookies from 'nookies';
 import { useRouter } from 'next/router';
-import { verifyIdToken } from '../lib/firebaseAdmin';
 import { useEffect } from 'react';
 import { auth } from '../lib/firebaseClient';
+import { checkNookies } from '../lib';
+import { useAuth } from '../hooks/useAuth';
 
-export default function Profile({ email, error }) {
+export default function Profile({ token, error }) {
+	const { user } = useAuth();
 	const router = useRouter();
 
 	const signout = async () => {
@@ -13,24 +14,18 @@ export default function Profile({ email, error }) {
 	};
 
 	useEffect(() => {
-		if (error) router.push('/login');
+		error && router.push('/login');
 	}, []);
 
-	if (!email) return <div>Loading...</div>;
+	if (!user) return <div>Loading...</div>;
 	return (
 		<>
-			<div>Welcome back, {email.split('@')[0]}!</div>
+			<div>Welcome back, {token.email.split('@')[0]}!</div>
 			<button onClick={signout}>Signout</button>
 		</>
 	);
 }
 
 export async function getServerSideProps(context) {
-	try {
-		const cookies = nookies.get(context);
-		const { email } = await verifyIdToken(cookies.token);
-		return { props: { email } };
-	} catch (error) {
-		return { props: { error: true } };
-	}
+	return await checkNookies(context);
 }

@@ -16,7 +16,6 @@ export const useAuth = () => {
 
 const useProvideAuth = () => {
 	const [user, setUser] = useState(null);
-
 	useEffect(() => {
 		return auth.onIdTokenChanged(async (user) => {
 			if (!user) {

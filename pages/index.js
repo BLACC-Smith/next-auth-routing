@@ -1,11 +1,14 @@
 import { useAuth } from '../hooks/useAuth';
 import Link from 'next/link';
+import { auth } from '../lib/firebaseClient';
+import { useRouter } from 'next/router';
 
 export default function Home() {
 	const { user } = useAuth();
+	const router = useRouter();
 
 	const signout = async () => {
-		await firebase.auth().signOut();
+		await auth.signOut();
 		router.push('/');
 	};
 
