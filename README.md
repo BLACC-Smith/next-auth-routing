@@ -21,3 +21,7 @@ The objective here is to have authentication that persists whenever a user close
 - With Firebase Auth, there are "3 states": unknown, signed in, not signed in.
   - When you run the app, it takes some time for Firebase Auth to check if there is a user signed in or not, this is the **unknown state**
   - This is why we server-side render the private pages. We can bypass the **unknown state** with a loading indicator and still be able to reroute the user when necessary.
+  - This implementation works when using Firebase Auth on the clien. Moving your login logic to the api folder will not work.
+  
+### To Do
+- [ ] Get Firebase Auth to work with internal API routes `/api/login`
